@@ -14,6 +14,8 @@ import VideoPreviewModal from './VideoPreviewModal';
 export default function CourseDetailsContent() {
   const params = useParams();
   const slug = params?.slug as string;
+  const [selectedLesson, setSelectedLesson] =
+  useState<any>(null);
 
   const { data: course, isLoading, error } = useCourse(slug);
 
@@ -82,7 +84,11 @@ export default function CourseDetailsContent() {
       <div className="max-w-screen-2xl mx-auto px-4 lg:px-8 py-10">
         <div className="flex gap-8 items-start">
           <div className="flex-1 min-w-0">
-            <CourseTabs course={course} />
+            <CourseTabs course={course} 
+            onLessonClick={(lesson) => {
+              setSelectedLesson(lesson);
+              setModalOpen(true);
+            }}/>
           </div>
 
           <div className="hidden lg:block w-80 xl:w-96 shrink-0">
@@ -117,6 +123,7 @@ export default function CourseDetailsContent() {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         course={course}
+        lesson={selectedLesson}
       />
     </>
   );

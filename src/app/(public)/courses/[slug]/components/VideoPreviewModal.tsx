@@ -17,18 +17,20 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { getYoutubeEmbedUrl } from '@/lib/helper/youtubePlayer';
-import { Course } from '@/types/course.types';
+import { Course, Lesson } from '@/types/course.types';
 
 interface VideoPreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   course: Course;
+  lesson?: Lesson;
 }
 
 export default function VideoPreviewModal({
   isOpen,
   onClose,
   course,
+  lesson
 }: VideoPreviewModalProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -64,6 +66,9 @@ export default function VideoPreviewModal({
   const currentVideo = activeLesson
     ? activeLesson.videoUrl
     : course.previewVideo;
+
+  const videoUrl =
+  lesson?.videoUrl || course.previewVideo;
 
   const [playing, setPlaying] = useState(false);
 

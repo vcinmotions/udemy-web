@@ -17,7 +17,7 @@ const TABS = [
 
 type TabId = (typeof TABS)[number]['id'];
 
-export default function CourseTabs({ course }: { course: Course }) {
+export default function CourseTabs({ course, onLessonClick, }: { course: Course, onLessonClick: (lesson: any) => void; }) {
   const [activeTab, setActiveTab] = useState<TabId>('tab-overview');
 
   return (
@@ -52,7 +52,7 @@ export default function CourseTabs({ course }: { course: Course }) {
 
       {/* Curriculum */}
       {activeTab === 'tab-curriculum' && (
-        <CurriculumAccordion course={course} />
+        <CurriculumAccordion course={course} onLessonClick={onLessonClick} />
       )}
 
       {/* Instructor */}

@@ -13,18 +13,19 @@ import {
 import type { Course, CurriculumSection, Lesson } from '@/data/mockData';
 import { motion, AnimatePresence } from 'framer-motion';
 
-function LessonRow({ lesson }: { lesson: Lesson }) {
+function LessonRow({ lesson, onClick, }: { lesson: Lesson, onClick: () => void; }) {
   const typeIcon = lesson.type === 'quiz'
     ? <HelpCircle size={14} className="text-muted-foreground" />
     : lesson.type === 'resource'
     ? <FileText size={14} className="text-muted-foreground" />
     : <Play size={14} className="text-muted-foreground" />;
 
+    console.log("lesson in LessonRow", lesson)
   return (
     <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors rounded-lg">
       <div className="shrink-0">{typeIcon}</div>
       <span className="text-sm text-foreground flex-1 leading-snug">{lesson.title}</span>
-      <div className="flex items-center gap-2 shrink-0">
+      <div className="flex items-center gap-2 shrink-0" onClick={onClick}>
         {lesson.isPreview && (
           <span className="text-xs text-primary font-medium flex items-center gap-1 hover:underline cursor-pointer">
             <Eye size={12} />
@@ -42,7 +43,7 @@ function LessonRow({ lesson }: { lesson: Lesson }) {
   );
 }
 
-function SectionItem({ section, defaultOpen = false }: { section: CurriculumSection; defaultOpen?: boolean }) {
+function SectionItem({ section, defaultOpen = false, onLessonClick, }: { section: CurriculumSection; defaultOpen?: boolean, onLessonClick: (lesson: Lesson) => void; }) {
   const [open, setOpen] = useState(defaultOpen);
 
   return (
@@ -73,7 +74,7 @@ function SectionItem({ section, defaultOpen = false }: { section: CurriculumSect
           >
             <div className="p-2 bg-white divide-y divide-border/50">
               {section.lessons.map((lesson) => (
-                <LessonRow key={lesson.id} lesson={lesson} />
+                <LessonRow key={lesson.id} lesson={lesson} onClick={() => onLessonClick(lesson)} />
               ))}
             </div>
           </motion.div>
@@ -84,8 +85,10 @@ function SectionItem({ section, defaultOpen = false }: { section: CurriculumSect
 }
 export default function CurriculumAccordion({
   course,
+  onLessonClick,
 }: {
-  course: Course;
+  course: Course,
+  onLessonClick: (lesson: Lesson) => void;
 }) {
   const [showAll, setShowAll] = useState(false);
 
@@ -126,6 +129,7 @@ export default function CurriculumAccordion({
             key={section.id}
             section={section}
             defaultOpen={i === 0}
+            onLessonClick={onLessonClick}
           />
         ))}
       </div>
