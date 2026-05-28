@@ -201,6 +201,10 @@ export default function StudentSignupPage() {
                   Want to teach?{' '}
                   <Link href="/signup/instructor" className="text-cyan-400 hover:text-cyan-300 transition font-medium">Become an Instructor</Link>
                 </p>
+
+                <p className="text-xs text-white/30">
+                <Link href="/" className="text-green-400 hover:text-amber-300 transition font-medium">Home</Link>
+              </p>
               </div>
             </div>
           </div>

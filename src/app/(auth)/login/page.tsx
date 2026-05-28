@@ -145,6 +145,9 @@ export default function LoginPage() {
                 Want to teach?{' '}
                 <Link href="/signup/instructor" className="text-amber-400 hover:text-amber-300 transition font-medium">Instructor sign up</Link>
               </p>
+              <p className="text-xs text-white/30">
+                <Link href="/" className="text-green-400 hover:text-amber-300 transition font-medium">Home</Link>
+              </p>
             </div>
           </div>
         </div>

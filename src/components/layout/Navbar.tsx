@@ -479,7 +479,7 @@ export default function Navbar() {
                     </Link>
 
                     <Link
-                      href="/register"
+                      href="/signup"
                       className="w-full text-center py-2.5 rounded-lg bg-primary text-white font-medium"
                       onClick={() => setMobileOpen(false)}
                     >

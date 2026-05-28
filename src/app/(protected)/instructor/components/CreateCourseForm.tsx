@@ -169,7 +169,7 @@ export function CreateCourseForm() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl p-6">
+    <div className="mx-auto max-w-7xl p-6 lg:p-8">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         {/* HEADER */}
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">

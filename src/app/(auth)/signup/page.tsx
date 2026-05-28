@@ -5,7 +5,7 @@ import { GraduationCap, BookOpen, ArrowRight, Check } from 'lucide-react';
 
 export default function SignupChoicePage() {
   return (
-    <section className="relative min-h-screen overflow-hidden bg-[#0b1120] flex items-center justify-center px-4">
+    <section className="relative min-h-screen overflow-hidden bg-[#0b1120] flex items-center justify-center py-4 px-4">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-[-100px] left-0 w-[400px] h-[400px] bg-violet-600/20 blur-3xl rounded-full" />
         <div className="absolute bottom-[-100px] right-0 w-[400px] h-[400px] bg-amber-500/10 blur-3xl rounded-full" />
@@ -72,10 +72,16 @@ export default function SignupChoicePage() {
           </Link>
         </div>
 
+<div className="mt-12 text-center">
         <p className="text-center text-white/40 text-sm mt-8">
           Already have an account?{' '}
           <Link href="/login" className="text-violet-400 font-semibold hover:text-violet-300 transition">Log in</Link>
         </p>
+
+        <p className="text-xs text-white/30">
+                <Link href="/" className="text-green-400 hover:text-amber-300 transition font-medium">Home</Link>
+              </p>
+              </div>
       </div>
     </section>
   );

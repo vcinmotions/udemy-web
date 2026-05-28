@@ -36,8 +36,8 @@ function MyCoursesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background pt-24 pb-16">
-      <div className="mx-auto max-w-7xl px-4 lg:px-8">
+    <main className="min-h-screen bg-background pb-16">
+      <div className="mx-auto max-w-7xl p-6 lg:px-8">
         <div className="mb-10">
           <div className="mb-3 flex items-center gap-3">
             <BookOpen

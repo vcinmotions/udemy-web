@@ -31,8 +31,8 @@ export default function InstructorCoursesPage() {
   return (
     <div className="space-y-6 p-6">
 
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="block md:flex items-center justify-between">
+        <div className='mb-5'>
           <h1 className="text-3xl font-bold">
             My Courses
           </h1>
@@ -44,7 +44,7 @@ export default function InstructorCoursesPage() {
 
         <Link
           href="/instructor/courses/new"
-          className="flex items-center gap-2 rounded-xl bg-black px-5 py-3 text-white"
+          className="flex items-center w-max gap-2 rounded-xl bg-black px-5 py-3 text-white"
         >
           <PlusCircle size={18} />
           New Course

@@ -157,7 +157,7 @@ export function CreateCurriculumForm() {
     };
 
   return (
-    <div className="mx-auto max-w-7xl">
+    <div className="mx-auto max-w-7xl p-6 lg:p-8">
 
       <form
         onSubmit={handleSubmit(onSubmit)}
