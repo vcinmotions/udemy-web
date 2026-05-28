@@ -74,7 +74,7 @@ export default function EditCoursePage() {
     enabled: !!courseId,
   });
 
-  console.log('course', course);
+  console.log('course in edit page instructor', course);
  
   // ── fetch categories ────────────────────────
  
