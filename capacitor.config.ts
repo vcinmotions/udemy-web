@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.shobha.udemyclone',
-  appName: 'udemy-clone',
+  appName: 'Smart Skill India',
   webDir: 'out',
   server: {
     url: 'https://udemy-web.vercel.app',
