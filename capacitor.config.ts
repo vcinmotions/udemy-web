@@ -4,6 +4,10 @@ const config: CapacitorConfig = {
   appId: 'com.shobha.udemyclone',
   appName: 'udemy-clone',
   webDir: 'out',
+  server: {
+    url: 'https://udemy-web.vercel.app',
+    cleartext: true,
+  },
 };
 
 export default config;

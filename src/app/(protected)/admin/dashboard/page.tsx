@@ -12,25 +12,41 @@ import {
   Activity,
 } from 'lucide-react';
 
-import { useAuthStore } from '@/store/auth.store';
-import { api } from '@/api/axios';
+import { adminApi } from '@/api/admin.api';
 
 import DashboardCard from '@/components/dashboard/DashboardCard';
 import DashboardSection from '@/components/dashboard/DashboardSection';
 
 import { STAT_COLORS } from '@/config/dashboard-ui';
 
+type AdminDashboardData = {
+  stats?: {
+    totalUsers?: number;
+    totalCourses?: number;
+    totalEnrollments?: number;
+    pendingCourses?: number;
+  };
+  recentUsers?: {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+  }[];
+  recentCourses?: {
+    id: string;
+    title: string;
+    image?: string;
+    isApproved?: boolean;
+    instructor?: {
+      name?: string;
+    };
+  }[];
+};
+
 function useAdminStats(enabled: boolean) {
-  return useQuery({
+  return useQuery<AdminDashboardData>({
     queryKey: ['admin-dashboard'],
-
-    queryFn: async () => {
-      const res = await api.get(
-        '/admin/dashboard'
-      );
-
-      return res.data.data;
-    },
+    queryFn: adminApi.getDashboard,
 
     enabled,
 
@@ -46,9 +62,7 @@ function useAdminStats(enabled: boolean) {
 function AdminDashboardPage() {
   const router = useRouter();
 
-  const { data, isLoading } = useAdminStats(true);
-
-  console.log('DATA', data);
+  const { data, isLoading, isError } = useAdminStats(true);
 
   const stats = data?.stats;
 
@@ -131,7 +145,28 @@ function AdminDashboardPage() {
           >
             <div className="space-y-3">
 
-              {(data?.recentUsers || []).map((user: any) => (
+              {isLoading ? (
+                [1, 2, 3].map((item) => (
+                  <div
+                    key={item}
+                    className="flex items-center gap-3 rounded-xl border border-border p-3"
+                  >
+                    <div className="h-10 w-10 animate-pulse rounded-full bg-muted" />
+                    <div className="min-w-0 flex-1 space-y-2">
+                      <div className="h-4 w-2/3 animate-pulse rounded bg-muted" />
+                      <div className="h-3 w-full animate-pulse rounded bg-muted" />
+                    </div>
+                  </div>
+                ))
+              ) : isError ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">
+                  Could not load recent users.
+                </p>
+              ) : (data?.recentUsers || []).length === 0 ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">
+                  No recent users found.
+                </p>
+              ) : (data?.recentUsers || []).map((user) => (
                 <div
                   key={user.id}
                   className="flex items-center gap-3 rounded-xl border border-border p-3"
@@ -175,7 +210,29 @@ function AdminDashboardPage() {
             >
               <div className="space-y-3">
 
-                {(data?.recentCourses || []).map((course: any) => (
+                {isLoading ? (
+                  [1, 2, 3].map((item) => (
+                    <div
+                      key={item}
+                      className="flex items-center gap-4 rounded-xl border border-border p-3"
+                    >
+                      <div className="h-14 w-20 animate-pulse rounded-lg bg-muted" />
+                      <div className="min-w-0 flex-1 space-y-2">
+                        <div className="h-4 w-2/3 animate-pulse rounded bg-muted" />
+                        <div className="h-3 w-1/3 animate-pulse rounded bg-muted" />
+                      </div>
+                      <div className="h-7 w-20 animate-pulse rounded-full bg-muted" />
+                    </div>
+                  ))
+                ) : isError ? (
+                  <p className="py-8 text-center text-sm text-muted-foreground">
+                    Could not load recent courses.
+                  </p>
+                ) : (data?.recentCourses || []).length === 0 ? (
+                  <p className="py-8 text-center text-sm text-muted-foreground">
+                    No recent courses found.
+                  </p>
+                ) : (data?.recentCourses || []).map((course) => (
                   <div
                     key={course.id}
                     className="flex items-center gap-4 rounded-xl border border-border p-3"
@@ -239,7 +296,7 @@ function AdminDashboardPage() {
             {
               label: 'Pending Review',
               icon: Activity,
-              href: '/admin/courses/pending',
+              href: '/admin/pending',
             },
 
             {

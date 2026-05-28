@@ -1,6 +1,11 @@
 import { api } from "./axios";
 
 export const adminApi = {
+  getDashboard: async () => {
+    const res = await api.get('/admin/dashboard');
+    return res.data.data;
+  },
+
   // COURSES
   getPendingCourses: async () => {
     const res = await api.get('/admin/courses/pending');

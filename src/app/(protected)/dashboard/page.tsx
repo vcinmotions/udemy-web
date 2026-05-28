@@ -10,6 +10,17 @@ import { STAT_COLORS } from '@/config/dashboard-ui';
 import { useQuery } from '@tanstack/react-query';
 import { studentApi } from '@/api/student.api';
 
+type Enrollment = {
+  id: string;
+  progress?: number;
+  course?: {
+    title?: string;
+    subtitle?: string;
+    image?: string;
+    slug?: string;
+  };
+};
+
 function StudentDashboard() {
   const router = useRouter();
   const { user } = useAuthStore();
@@ -17,15 +28,23 @@ function StudentDashboard() {
   const {
       data: enrollments = [],
       isLoading,
-    } = useQuery({
-      queryKey: ['my-courses'],
+      isError,
+    } = useQuery<Enrollment[]>({
+      queryKey: ['student-dashboard', user?.id],
       queryFn: studentApi.getMyCourse,
+      enabled: Boolean(user),
     });
     
 
-  console.log("enrollments in dashboard", enrollments);
-  console.log("user in dashboard", user);
   if (!user) return null;
+
+  const totalProgress = enrollments.reduce(
+    (acc: number, item) => acc + (Number(item.progress) || 0),
+    0
+  );
+  const averageProgress = enrollments.length
+    ? Math.round(totalProgress / enrollments.length)
+    : 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -34,7 +53,7 @@ function StudentDashboard() {
         <div className="mb-8">
           <p className="section-label">STUDENT DASHBOARD</p>
           <h1 className="mt-2 text-4xl font-black text-foreground">
-            Welcome back, {user.name.split(' ')[0]}! 👋
+            Welcome back, {user.name.split(' ')[0]}!
           </h1>
           <p className="mt-2 text-muted-foreground">
             Track your learning progress and continue where you left off.
@@ -52,17 +71,7 @@ function StudentDashboard() {
           />
           <DashboardCard
             title="Hours Learned"
-            value={`${
-              enrollments.length > 0
-                ? Math.round(
-                    enrollments.reduce(
-                      (acc: number, item: any) =>
-                        acc + item.progress,
-                      0
-                    ) / enrollments.length
-                  )
-                : 0
-            }%`}
+            value={`${averageProgress}%`}
             icon={Clock}
             colorBg={STAT_COLORS.cyan.bg}
             colorText={STAT_COLORS.cyan.text}
@@ -76,7 +85,7 @@ function StudentDashboard() {
           />
           <DashboardCard
             title="Avg Progress"
-            value="0%"
+            value={`${averageProgress}%`}
             icon={TrendingUp}
             colorBg={STAT_COLORS.orange.bg}
             colorText={STAT_COLORS.orange.text}
@@ -96,7 +105,33 @@ function StudentDashboard() {
               </button>
             }
           >
-            {enrollments.length === 0 ? (
+            {isLoading ? (
+              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {[1, 2, 3].map((item) => (
+                  <div
+                    key={item}
+                    className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm"
+                  >
+                    <div className="aspect-video animate-pulse bg-muted" />
+                    <div className="space-y-3 p-5">
+                      <div className="h-5 w-3/4 animate-pulse rounded bg-muted" />
+                      <div className="h-4 w-full animate-pulse rounded bg-muted" />
+                      <div className="h-2 w-full animate-pulse rounded bg-muted" />
+                      <div className="h-11 w-full animate-pulse rounded-xl bg-muted" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : isError ? (
+              <div className="py-12 text-center">
+                <p className="font-medium text-foreground">
+                  Could not load your courses
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Please refresh the page or try again in a moment.
+                </p>
+              </div>
+            ) : enrollments.length === 0 ? (
               <div className="py-12 text-center">
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-border bg-muted">
                   <Play className="h-7 w-7 text-muted-foreground" />
@@ -121,7 +156,7 @@ function StudentDashboard() {
               </div>
             ) : (
               <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                {enrollments.map((enrollment: any) => (
+                {enrollments.map((enrollment) => (
                   <div
                     key={enrollment.id}
                     className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm"
@@ -129,22 +164,22 @@ function StudentDashboard() {
                     <div className="relative aspect-video">
                       <img
                         src={
-                          enrollment.course.image ||
+                          enrollment.course?.image ||
                           '/placeholder.jpg'
                         }
-                        alt={enrollment.course.title}
+                        alt={enrollment.course?.title || 'Course image'}
                         className="h-full w-full object-cover"
                       />
                     </div>
 
                     <div className="p-5">
                       <h3 className="line-clamp-2 text-lg font-bold text-foreground">
-                        {enrollment.course.title}
+                        {enrollment.course?.title || 'Untitled course'}
                       </h3>
 
                       <p className="mt-2 text-sm text-muted-foreground">
                         {
-                          enrollment.course.subtitle
+                          enrollment.course?.subtitle
                         }
                       </p>
 
@@ -162,7 +197,10 @@ function StudentDashboard() {
                         <div className="h-2 overflow-hidden rounded-full bg-muted">
                           <div
                             style={{
-                              width: `${enrollment.progress}%`,
+                              width: `${Math.min(
+                                100,
+                                Math.max(0, Number(enrollment.progress) || 0)
+                              )}%`,
                             }}
                             className="h-full bg-primary transition-all"
                           />
@@ -171,11 +209,11 @@ function StudentDashboard() {
 
                       <button
                         onClick={() =>
-                          router.push(
-                            `/dashboard/learn/${enrollment.course.slug}`
-                          )
+                          enrollment.course?.slug &&
+                          router.push(`/dashboard/learn/${enrollment.course.slug}`)
                         }
-                        className="bg-black mt-5 flex h-11 w-full items-center justify-center rounded-xl bg-primary font-semibold text-white transition hover:bg-primary/90"
+                        disabled={!enrollment.course?.slug}
+                        className="mt-5 flex h-11 w-full items-center justify-center rounded-xl bg-primary font-semibold text-white transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         Continue Learning
                       </button>

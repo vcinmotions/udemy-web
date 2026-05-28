@@ -34,6 +34,12 @@ export const forgotPassword = async (payload: any) => {
   return data;
 };
 
+export const resetPassword = async (payload: { token: string; password: string }) => {
+  const { data } = await api.post('/auth/reset-password', payload);
+
+  return data;
+};
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface User {
@@ -74,6 +80,16 @@ export const authApi = {
 
   logout: async (refreshToken: string) => {
     await api.post('/auth/logout', { refreshToken });
+  },
+
+  forgotPassword: async (data: { email: string }) => {
+    const res = await api.post('/auth/forgot-password', data);
+    return res.data;
+  },
+
+  resetPassword: async (data: { token: string; password: string }) => {
+    const res = await api.post('/auth/reset-password', data);
+    return res.data;
   },
 
   getMe: async () => {

@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AppLogo from '@/components/ui/AppLogo';
 import {
-  Search,
   ShoppingCart,
   Bell,
   Globe,
@@ -15,6 +14,7 @@ import {
   User,
   Heart,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 import * as Icons from 'lucide-react';
 
@@ -24,26 +24,23 @@ import { LogOut, LayoutDashboard } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import AuthButtons from '../auth/AuthButtons';
-import UserMenu from '../auth/UserMenu';
 import { useAuthStore } from '@/store/auth.store';
 import SearchBar from '@/app/(public)/components/home/SearchBar';
 import { categoryApi } from '@/api/category.api';
 import { useQuery } from '@tanstack/react-query';
 import { colors } from '@/data/color';
+import { useLogout } from '@/hooks/auth/useAuth';
 
-const navCategories = [
-  { label: 'Development', href: '/courses"' },
-  { label: 'Data Science', href: '/courses' },
-  { label: 'Design', href: '/courses' },
-  { label: 'Marketing', href: '/courses' },
-  { label: 'IT & Software', href: '/courses' },
-  { label: 'Business', href: '/courses' },
-];
+type Category = {
+  id: string;
+  name: string;
+  icon?: string;
+  courses?: unknown[];
+};
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
 
   const router = useRouter();
 
@@ -54,16 +51,15 @@ export default function Navbar() {
     useRef<HTMLDivElement | null>(null);
 
   const user = useAuthStore((state) => state.user);
+  const { mutate: logout, isPending: isLoggingOut } = useLogout();
 
   const [catOpen, setCatOpen] = useState(false);
   const catRef = useRef<HTMLDivElement | null>(null);
 
-  const { data: categories = [], isLoading } = useQuery({
+  const { data: categories = [] } = useQuery<Category[]>({
     queryKey: ['categories'],
     queryFn: categoryApi.getAllCategory,
   });
-
-  console.log("categories in Navbar", categories);
 
   const getRandomColor = (id: string) => {
     let hash = 0;
@@ -161,9 +157,13 @@ export default function Navbar() {
                 style={{ marginTop: '8px' }}
               >
                 <div className="max-h-[calc(100vh-5rem)] overflow-y-auto py-2">
-                  {categories.map((cat: any) => {
+                  {categories.map((cat) => {
                     const Icon =
-                      (Icons as any)[cat.icon] || Icons.BookOpen;
+                      ((cat.icon &&
+                        (Icons as unknown as Record<string, LucideIcon>)[
+                          cat.icon
+                        ]) ||
+                        Icons.BookOpen);
 
                         const color = getRandomColor(cat.id);
 
@@ -191,7 +191,7 @@ export default function Navbar() {
                             {cat.name}
                           </span>
                           <span className="text-xs text-muted-foreground">
-                            {cat.courses.length.toLocaleString()} courses
+                            {(cat.courses?.length || 0).toLocaleString()} courses
                           </span>
                         </div>
                       </Link>
@@ -350,11 +350,13 @@ export default function Navbar() {
                         </button> */}
 
                         <button
+                          onClick={() => logout()}
+                          disabled={isLoggingOut}
                           className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-red-500 hover:bg-red-50"
                         >
                           <LogOut size={18} />
 
-                          Logout
+                          {isLoggingOut ? 'Logging out...' : 'Logout'}
                         </button>
                       </div>
                     </div>
@@ -437,12 +439,12 @@ export default function Navbar() {
                 {user ? (
                   <div className="space-y-2">
                     <Link
-                      href="/profile"
+                      href={dashboardRoute}
                       className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted text-sm font-medium"
                       onClick={() => setMobileOpen(false)}
                     >
-                      <User size={18} />
-                      Profile
+                      <LayoutDashboard size={18} />
+                      Dashboard
                     </Link>
 
                     {/* <Link
@@ -457,12 +459,13 @@ export default function Navbar() {
                     <button
                       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted text-sm font-medium text-left"
                       onClick={() => {
-                        // logout logic
+                        logout();
                         setMobileOpen(false);
                       }}
+                      disabled={isLoggingOut}
                     >
                       <Icons.LogOut size={18} />
-                      Logout
+                      {isLoggingOut ? 'Logging out...' : 'Logout'}
                     </button>
                   </div>
                 ) : (
