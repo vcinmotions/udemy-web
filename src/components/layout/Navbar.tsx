@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 
 import * as Icons from 'lucide-react';
-import { categories } from '@/data/mockData';
+
 import { useRef } from 'react';
 
 import { LogOut, LayoutDashboard } from 'lucide-react';
@@ -27,6 +27,9 @@ import AuthButtons from '../auth/AuthButtons';
 import UserMenu from '../auth/UserMenu';
 import { useAuthStore } from '@/store/auth.store';
 import SearchBar from '@/app/(public)/components/home/SearchBar';
+import { categoryApi } from '@/api/category.api';
+import { useQuery } from '@tanstack/react-query';
+import { colors } from '@/data/color';
 
 const navCategories = [
   { label: 'Development', href: '/courses"' },
@@ -54,6 +57,23 @@ export default function Navbar() {
 
   const [catOpen, setCatOpen] = useState(false);
   const catRef = useRef<HTMLDivElement | null>(null);
+
+  const { data: categories = [], isLoading } = useQuery({
+    queryKey: ['categories'],
+    queryFn: categoryApi.getAllCategory,
+  });
+
+  console.log("categories in Navbar", categories);
+
+  const getRandomColor = (id: string) => {
+    let hash = 0;
+
+    for (let i = 0; i < id.length; i++) {
+      hash = id.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    return colors[Math.abs(hash) % colors.length];
+  };
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -141,9 +161,11 @@ export default function Navbar() {
                 style={{ marginTop: '8px' }}
               >
                 <div className="max-h-[calc(100vh-5rem)] overflow-y-auto py-2">
-                  {categories.map((cat) => {
+                  {categories.map((cat: any) => {
                     const Icon =
                       (Icons as any)[cat.icon] || Icons.BookOpen;
+
+                        const color = getRandomColor(cat.id);
 
                     return (
                       <Link
@@ -154,9 +176,14 @@ export default function Navbar() {
                       >
                         <div
                           className="p-2 rounded-lg"
-                          style={{ backgroundColor: `${cat.color}20` }}
+                          style={{
+                            backgroundColor: `${color}20`,
+                          }}
                         >
-                          <Icon size={16} style={{ color: cat.color }} />
+                          <Icon
+                            size={16}
+                            style={{ color }}
+                          />
                         </div>
 
                         <div className="flex flex-col">
@@ -164,7 +191,7 @@ export default function Navbar() {
                             {cat.name}
                           </span>
                           <span className="text-xs text-muted-foreground">
-                            {cat.courseCount.toLocaleString()} courses
+                            {cat.courses.length.toLocaleString()} courses
                           </span>
                         </div>
                       </Link>
@@ -418,14 +445,14 @@ export default function Navbar() {
                       Profile
                     </Link>
 
-                    <Link
+                    {/* <Link
                       href="/my-learning"
                       className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted text-sm font-medium"
                       onClick={() => setMobileOpen(false)}
                     >
                       <BookOpen size={18} />
                       My Learning
-                    </Link>
+                    </Link> */}
 
                     <button
                       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted text-sm font-medium text-left"

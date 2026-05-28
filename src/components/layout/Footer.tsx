@@ -15,53 +15,49 @@ const footerLinks = {
     },
     {
       name: 'Careers',
-      href: '/careers',
+      href: '/#',
     },
     {
       name: 'Press',
-      href: '/press',
+      href: '/#',
     },
     {
       name: 'Blog',
-      href: '/blog',
+      href: '/#',
     },
     {
       name: 'Investors',
-      href: '/investors',
+      href: '/#',
     },
   ],
 
   Learners: [
     {
       name: 'SmartSkills Business',
-      href: '/business',
+      href: '/#',
     },
     {
       name: 'Mobile App',
-      href: '/mobile-app',
+      href: '/#',
     },
     {
       name: 'Affiliate Program',
-      href: '/affiliate',
+      href: '/#',
     },
     {
       name: 'Scholarships',
-      href: '/scholarships',
+      href: '/#',
     },
   ],
 
   Instructors: [
     {
       name: 'Become an Instructor',
-      href: '/teach',
+      href: '/signup/instructor',
     },
     {
       name: 'Instructor Hub',
-      href: '/instructor',
-    },
-    {
-      name: 'Test Video',
-      href: '/test-video',
+      href: '/login',
     },
     {
       name: 'Instructor FAQ',
@@ -70,10 +66,6 @@ const footerLinks = {
   ],
 
   Support: [
-    {
-      name: 'Help Center',
-      href: '/help',
-    },
     {
       name: 'Contact Us',
       href: '/contact',
@@ -97,10 +89,6 @@ const footerLinks = {
     {
       name: 'Terms of Service',
       href: '/terms-of-use',
-    },
-    {
-      name: 'Cookie Settings',
-      href: '/cookies',
     },
   ],
 };

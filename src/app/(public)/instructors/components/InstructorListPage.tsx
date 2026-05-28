@@ -8,7 +8,6 @@ import {
   Star,
   Users,
   BookOpen,
-  ArrowRight,
 } from 'lucide-react';
 
 import { motion } from 'framer-motion';
@@ -17,39 +16,33 @@ import AppImage from '@/components/ui/AppImage';
 
 import { useInstructors } from '@/queries/useInstructor';
 
-export default function InstructorSpotlight() {
+export default function InstructorListPage() {
   const { data: instructors = [] } =
     useInstructors();
 
+  console.log(
+    'instructors in InstructorListPage',
+    instructors
+  );
+
   return (
-    <section className="py-16">
+    <main className="min-h-screen pt-24 pb-16">
       <div className="max-w-screen-2xl mx-auto px-4 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
-          <div>
-            <p className="section-label mb-2">
-              Learn from the best
-            </p>
+        <div className="mb-10">
+          <p className="section-label mb-2">
+            Learn from the best
+          </p>
 
-            <h2 className="text-hero-md text-foreground">
-              Top Instructors
-            </h2>
-          </div>
-
-          <Link
-            href="/instructors"
-            className="text-primary font-semibold text-sm flex items-center gap-1 hover:underline"
-          >
-            View all instructors
-
-            <ArrowRight size={14} />
-          </Link>
+          <h1 className="text-hero-md text-foreground">
+            Top Instructors
+          </h1>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {instructors.map(
             (inst: any, i: number) => (
               <Link
-                href={`/instructor/${inst.id}`}
+                href={`/instructors/${inst.id}`}
                 key={inst.id}
               >
                 <motion.div
@@ -66,7 +59,7 @@ export default function InstructorSpotlight() {
                     duration: 0.4,
                     delay: i * 0.1,
                   }}
-                  className="bg-white border border-border rounded-2xl p-6 text-center hover:shadow-card-hover transition-all duration-200 group cursor-pointer"
+                  className="bg-white border border-border rounded-2xl p-6 text-center hover:shadow-card-hover transition-all duration-200 group cursor-pointer h-full"
                 >
                   <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 ring-4 ring-primary/10 group-hover:ring-primary/30 transition-all">
                     <AppImage
@@ -86,8 +79,9 @@ export default function InstructorSpotlight() {
                     {inst.name}
                   </h3>
 
-                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                    {inst.headline}
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2 min-h-[36px]">
+                    {inst.headline ||
+                      'Professional Instructor'}
                   </p>
 
                   <div className="flex items-center justify-center gap-1 mt-3">
@@ -97,14 +91,14 @@ export default function InstructorSpotlight() {
                     />
 
                     <span className="text-sm font-bold text-foreground">
-                      {inst.averageRating}
+                      {inst.averageRating || 0}
                     </span>
 
                     <span className="text-xs text-muted-foreground">
                       (
                       {Math.floor(
-                        inst.totalReviews /
-                          1000
+                        (inst.totalReviews ||
+                          0) / 1000
                       )}
                       K)
                     </span>
@@ -112,10 +106,10 @@ export default function InstructorSpotlight() {
 
                   <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-border">
                     <div className="text-center">
-                      <p className="text-sm font-bold text-foreground">
+                      <p className="text-sm font-bold text-foreground font-tabular">
                         {Math.floor(
-                          inst.totalStudents /
-                            1000
+                          (inst.totalStudents ||
+                            0) / 1000
                         )}
                         K
                       </p>
@@ -128,7 +122,7 @@ export default function InstructorSpotlight() {
 
                     <div className="text-center">
                       <p className="text-sm font-bold text-foreground">
-                        {inst.totalCourses}
+                        {inst.totalCourses || 0}
                       </p>
 
                       <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
@@ -143,6 +137,6 @@ export default function InstructorSpotlight() {
           )}
         </div>
       </div>
-    </section>
+    </main>
   );
 }
